@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using Gatchan.Base.Standard.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,13 +8,15 @@ namespace Gatchan.Base.Standard.Base
 {
     public static class FileFunc
     {
+        public static IJsonConverter JsonConverter { get; set; }
+
         public static T LoadItemFromJson<T>(string filePath) where T : new()
         {
             if (!File.Exists(filePath))
                 return new T();
 
             var json = File.ReadAllText(filePath);
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonConverter.DeserializeObject<T>(json);
         }
 
         public static IList<T> LoadListFromJson<T>(string filePath) where T : new()
@@ -24,14 +26,14 @@ namespace Gatchan.Base.Standard.Base
                 return infos;
 
             var json = File.ReadAllText(filePath);
-            var items = JsonConvert.DeserializeObject<IList<T>>(json);
+            var items = JsonConverter.DeserializeObject<IList<T>>(json);
             items.ForEach(x => { infos.Add(x); });
             return infos;
         }
 
         public static void ExportItemToJson<T>(T item, string path)
         {
-            var str = JsonConvert.SerializeObject(item, Formatting.Indented);
+            var str = JsonConverter.SerializeObject(item);
             File.WriteAllText(path, str, Encoding.UTF8);
         }
 
@@ -45,7 +47,7 @@ namespace Gatchan.Base.Standard.Base
                     sources.Add(item);
             }
 
-            var str = JsonConvert.SerializeObject(sources, Formatting.Indented);
+            var str = JsonConverter.SerializeObject(sources);
             File.WriteAllText(path, str, Encoding.UTF8);
         }
     }
