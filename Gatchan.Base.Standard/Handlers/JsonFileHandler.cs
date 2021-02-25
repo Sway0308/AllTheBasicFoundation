@@ -1,22 +1,26 @@
-﻿using Gatchan.Base.Standard.Base;
+﻿using Gatchan.Base.Standard.Abstracts;
 
 namespace Gatchan.Base.Standard.Handlers
 {
-    public class JsonFileHandler<T> where T : class, new()
+    public class JsonFileHandler<T> : JsonAbstractHandler where T : class, new()
     {
-        private readonly string _FilePath;
+        private string _FilePath;
 
-        public JsonFileHandler(string filePath)
+        public JsonFileHandler()
         {
-            _FilePath = filePath;
-            Item = FileFunc.LoadItemFromJson<T>(_FilePath);
         }
 
         public T Item { get; private set; }
 
-        public void SaveItemToJson()
+        public override void LoadItem(string filePath)
         {
-            FileFunc.ExportItemToJson(Item, _FilePath);
+            _FilePath = filePath;
+            Item = LoadItemFromJson<T>(_FilePath);
+        }
+
+        public override void SaveToJson()
+        {
+            ExportItemToJson(Item, _FilePath);
         }
     }
 }

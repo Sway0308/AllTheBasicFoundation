@@ -8,47 +8,5 @@ namespace Gatchan.Base.Standard.Base
 {
     public static class FileFunc
     {
-        public static IJsonConverter JsonConverter { get; set; }
-
-        public static T LoadItemFromJson<T>(string filePath) where T : new()
-        {
-            if (!File.Exists(filePath))
-                return new T();
-
-            var json = File.ReadAllText(filePath);
-            return JsonConverter.DeserializeObject<T>(json);
-        }
-
-        public static IList<T> LoadListFromJson<T>(string filePath) where T : new()
-        {
-            var infos = new List<T>();
-            if (!File.Exists(filePath))
-                return infos;
-
-            var json = File.ReadAllText(filePath);
-            var items = JsonConverter.DeserializeObject<IList<T>>(json);
-            items.ForEach(x => { infos.Add(x); });
-            return infos;
-        }
-
-        public static void ExportItemToJson<T>(T item, string path)
-        {
-            var str = JsonConverter.SerializeObject(item);
-            File.WriteAllText(path, str, Encoding.UTF8);
-        }
-
-        public static void ExportListToJson<T>(IEnumerable<T> items, string path, bool isIncludeSource) where T : new()
-        {
-            var sources = !isIncludeSource ? new List<T>() : LoadListFromJson<T>(path);
-
-            foreach (var item in items)
-            {
-                if (!sources.Any(x => x.Equals(item)))
-                    sources.Add(item);
-            }
-
-            var str = JsonConverter.SerializeObject(sources);
-            File.WriteAllText(path, str, Encoding.UTF8);
-        }
     }
 }
